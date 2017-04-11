@@ -1,0 +1,14 @@
+{
+  "todos": [
+    {
+      "done": true,
+      "id": 1,
+      "label": "Wake up in the morning"
+    },
+    {
+      "done": true,
+      "id": 2,
+      "label": "Grab glasses, go out the door, hit the city"
+    }
+  ]
+}

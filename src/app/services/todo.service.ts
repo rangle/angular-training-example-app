@@ -2,35 +2,45 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
-import { Store } from '@ngrx/store';
 
 @Injectable()
 export class TodoService {
 
-  constructor(private http: Http,
-    private storeService: Store<any>
-  ) {
+  public todoList = [];
+
+  constructor(private http: Http) {
   }
 
-  getDefaultTodoList() {
-    this.http.get('http://www.json-generator.com/api/json/get/bHbBeYXhnS')
-      .map((data) => data.json())
-      .subscribe((jsonData) => {
-        const formattedTasks = jsonData.map((task) => {
-          return this.getTodoTaskForDisplay(task.label, task.done);
-        });
-        this.storeService.dispatch({
-          type: 'DEFAULT_TODO_LIST_LOADED',
-          payload: formattedTasks
+  getTodoList() {
+    return this.http.get('http://localhost:3000/todos')
+      .map(response => response.json())
+      .map(item => item.map(todo => this.getTodoTaskForDisplay(todo.label, todo.done, todo.id)))
+      .subscribe(todos => this.todoList = todos);
+  }
+
+  getTodoTaskForDisplay(label, isComplete, id) {
+    return {
+      id,
+      label,
+      isComplete
+    };
+  }
+
+  addItem(taskInput: string) {
+    this.http.post('http://localhost:3000/todos', { label: taskInput, done: false })
+      .map(response => response.json())
+      .map(todo => this.getTodoTaskForDisplay(todo.label, todo.done, todo.id))
+      .subscribe(newTodo => this.todoList.push(newTodo));
+  }
+
+  deleteItem(taskId: number) {
+    this.http.delete('http://localhost:3000/todos/' + taskId)
+      .map(response => response.json())
+      .subscribe(item => {
+        this.todoList = this.todoList.filter(todo => {
+          return todo.id !== taskId;
         });
       });
-  }
-
-  getTodoTaskForDisplay(label, isComplete) {
-    return {
-      label: label,
-      isComplete: isComplete
-    };
   }
 
 }

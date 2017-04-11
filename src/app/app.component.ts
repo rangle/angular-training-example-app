@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TodoService } from './services/todo.service';
-import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs/Observable';
 
 @Component({
   selector: 'rio-root',
@@ -10,19 +10,10 @@ import { Store } from '@ngrx/store';
 export class AppComponent implements OnInit {
   title = 'TODO List Application!';
 
-  constructor(private storeService: Store<any>,
-    private todoService: TodoService
-  ) { }
+  constructor(public todoService: TodoService) { }
 
   ngOnInit() {
-    this.todoService.getDefaultTodoList();
-  }
-
-  addTask(taskInput: string) {
-    this.storeService.dispatch({
-      type: 'TODO_TASK_ADDED',
-      payload: taskInput
-    });
+    this.todoService.getTodoList();
   }
 
 }

@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
 
 import { TodoDisplayComponent } from './todo-display.component';
 import { CapitalizePipe } from '../../pipes/capitalize.pipe';
@@ -7,7 +8,7 @@ import { CapitalizePipe } from '../../pipes/capitalize.pipe';
 describe('TodoDisplayComponent', () => {
   let component: TodoDisplayComponent;
   let fixture: ComponentFixture<TodoDisplayComponent>;
-  let store;
+  let el;
 
   beforeEach(async(() => {
 
@@ -21,24 +22,36 @@ describe('TodoDisplayComponent', () => {
         TodoDisplayComponent,
         CapitalizePipe
       ],
-      providers: [
-        { provide: Store, useValue: mockStore }
-      ]
+      providers: []
     })
       .compileComponents();
+
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(TodoDisplayComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-
-    store = fixture.debugElement.injector.get(Store);
-    spyOn(store, 'dispatch').and.callFake(() => { });
-    spyOn(store, 'select').and.callFake(() => { });
+    el = fixture.nativeElement;
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should display each todo', () => {
+    component.tasksToDisplay = [
+      { label: 'first', isComplete: false },
+      { label: 'second', isComplete: false }
+    ];
+    fixture.detectChanges();
+    expect(el.querySelector('ul').children.length).toBe(2);
+  });
+
+  it('should emit a delete output', () => {
+    spyOn(component.onItemDeleted, 'emit');
+    component.deleteTask(2);
+    expect(component.onItemDeleted.emit).toHaveBeenCalled();
+  });
+
 });
