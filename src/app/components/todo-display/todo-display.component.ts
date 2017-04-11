@@ -1,7 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, OnInit, EventEmitter } from '@angular/core';
 import { TodoService } from '../../services/todo.service';
 import { Observable } from 'rxjs/Observable';
-import { Store, Action } from '@ngrx/store';
 
 @Component({
   selector: 'rio-todo-display',
@@ -10,30 +9,20 @@ import { Store, Action } from '@ngrx/store';
 })
 export class TodoDisplayComponent implements OnInit {
 
-  tasksToDisplay: Observable<Array<Object>>;
+  @Input() tasksToDisplay: any[];
+  @Output() onItemDeleted = new EventEmitter<number>();
 
-  constructor(
-    private store: Store<any>
-  ) {
-    console.log(this.tasksToDisplay);
+  constructor() {
   }
 
   ngOnInit() {
-    this.tasksToDisplay = this.store.select('todoList');
   }
 
   completeTask(index) {
-    this.store.dispatch({
-      type: 'TODO_TASK_COMPLETED',
-      payload: index
-    });
   }
 
   deleteTask(index) {
-    this.store.dispatch({
-      type: 'TODO_TASK_DELETED',
-      payload: index
-    });
+    this.onItemDeleted.emit(index);
   }
 
   getCompleteButtonText(task) {

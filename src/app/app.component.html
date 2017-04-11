@@ -3,7 +3,9 @@
 </h1>
 <rio-text-input 
 buttonLabel="Add Task" 
-(textInputted)="addTask($event)"></rio-text-input>
+(textInputted)="todoService.addItem($event)"></rio-text-input>
 
-<rio-todo-display>
+<rio-todo-display
+  [tasksToDisplay]="todoService.todoList"
+  (onItemDeleted)="todoService.deleteItem($event)">
 </rio-todo-display>
