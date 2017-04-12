@@ -43,4 +43,22 @@ export class TodoService {
       });
   }
 
+  completeItem(taskId: number) {
+    const toggledValue = !this.todoList.find(item => item.id === taskId).isComplete;
+    this.http.patch('http://localhost:3000/todos/' + taskId, {
+      done: toggledValue,
+    })
+      .map(response => response.json())
+      .subscribe(item => {
+        this.todoList = this.todoList.map(todo => {
+          if (todo.id === taskId) {
+            return Object.assign(todo, {
+              isComplete: toggledValue
+            });
+          }
+          return todo;
+        });
+      });
+  }
+
 }

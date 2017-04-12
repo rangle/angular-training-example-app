@@ -16,4 +16,8 @@ export class AppComponent implements OnInit {
     this.todoService.getTodoList();
   }
 
+  itemCount() {
+    return this.todoService.todoList.length;
+  }
+
 }

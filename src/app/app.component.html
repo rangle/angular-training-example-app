@@ -5,7 +5,10 @@
 buttonLabel="Add Task" 
 (textInputted)="todoService.addItem($event)"></rio-text-input>
 
+<p>Todos: {{itemCount()}}</p>
+
 <rio-todo-display
   [tasksToDisplay]="todoService.todoList"
-  (onItemDeleted)="todoService.deleteItem($event)">
+  (onItemDeleted)="todoService.deleteItem($event)"
+  (onItemComplete)="todoService.completeItem($event)">
 </rio-todo-display>

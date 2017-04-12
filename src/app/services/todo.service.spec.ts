@@ -8,7 +8,27 @@ import 'rxjs/add/observable/of';
 
 import { TodoService } from './todo.service';
 
-describe('TodoService', () => {
+
+describe('TodoService (isolated, no TestBed)', () => {
+  let mockHttp;
+  let todoService: TodoService;
+  beforeEach(() => {
+    mockHttp = { get: () => { } };
+    spyOn(mockHttp, 'get').and.returnValue(Observable.of({
+      json: () => [
+        { 'done': false, 'id': 1, 'label': 'item 1' },
+        { 'done': true, 'id': 2, 'label': 'item 2' }
+      ]
+    }));
+    todoService = new TodoService(mockHttp);
+  });
+  it('should have the list of todos', () => {
+    todoService.getTodoList();
+    expect(todoService.todoList.length).toBe(2);
+  });
+});
+
+describe('TodoService (using TestBed)', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -23,7 +43,7 @@ describe('TodoService', () => {
     spyOn(http, 'get').and.callFake(url => Observable.of({
       json: () => [
         {
-          'done': true,
+          'done': false,
           'id': 1,
           'label': 'item 1'
         },
@@ -39,6 +59,9 @@ describe('TodoService', () => {
     }));
     spyOn(http, 'delete').and.callFake((url, body) => Observable.of({
       json: () => ({ label: 'old todo', done: false, id: body })
+    }));
+    spyOn(http, 'patch').and.callFake((url, body) => Observable.of({
+      json: () => ({ label: 'toggled todo', done: body.done })
     }));
   });
 
@@ -59,7 +82,14 @@ describe('TodoService', () => {
     expect(service.todoList.length).toEqual(2);
     service.deleteItem(1);
     expect(service.todoList.length).toEqual(1);
+  })));
 
+  it('should mark an item as complete', async(inject([TodoService], (service: TodoService) => {
+    service.getTodoList();
+    expect(service.todoList[0].isComplete).toEqual(false);
+    service.completeItem(1);
+    expect(service.todoList[0].isComplete).toEqual(true);
   })));
 
 });
+

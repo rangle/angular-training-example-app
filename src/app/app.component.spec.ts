@@ -1,4 +1,5 @@
-import { TestBed, async, inject } from '@angular/core/testing';
+import { TestBed, async, inject, ComponentFixture } from '@angular/core/testing';
+import { DebugElement } from '@angular/core';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { AppComponent } from './app.component';
 import { TodoService } from './services/todo.service';
@@ -46,3 +47,54 @@ describe('AppComponent', () => {
   }));
 
 });
+
+describe('AppComponent (isolated test)', () => {
+  let app: AppComponent;
+  let mockTodoService;
+  beforeEach(() => {
+    mockTodoService = {
+      getTodoList: () => { },
+      todoList: [{
+        label: 'item 1',
+        isComplete: false
+      }, {
+        label: 'item 2',
+        isComplete: true
+      }]
+    };
+
+    app = new AppComponent(mockTodoService);
+
+  });
+
+  describe('the itemCount method', () => {
+
+    it('should return the number of todos', () => {
+      expect(app.itemCount()).toEqual(2);
+    });
+
+  });
+});
+
+
+// describe('AppComponent (real service test)', () => {
+//   let fixture: ComponentFixture<AppComponent>;
+//   let comp: AppComponent;
+
+//   beforeEach(() => {
+//     TestBed.configureTestingModule({
+//       declarations: [AppComponent],
+//       providers: [TodoService]
+//     });
+//     const todoService: TodoService = TestBed.get(TodoService);
+//     spyOn(todoService, 'getTodoList').and.callFake(() => todoService.todoList = [
+//       { label: 'item 1', isComplete: false },
+//       { label: 'item 2', isComplete: true }
+//     ]);
+//     fixture = TestBed.createComponent(AppComponent);
+//     comp = fixture.componentInstance;
+//   });
+//   it('should have two items', () => {
+
+//   });
+// });

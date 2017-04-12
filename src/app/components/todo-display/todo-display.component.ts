@@ -11,6 +11,7 @@ export class TodoDisplayComponent implements OnInit {
 
   @Input() tasksToDisplay: any[];
   @Output() onItemDeleted = new EventEmitter<number>();
+  @Output() onItemComplete = new EventEmitter<number>();
 
   constructor() {
   }
@@ -18,11 +19,12 @@ export class TodoDisplayComponent implements OnInit {
   ngOnInit() {
   }
 
-  completeTask(index) {
+  completeTask(id) {
+    this.onItemComplete.emit(id);
   }
 
-  deleteTask(index) {
-    this.onItemDeleted.emit(index);
+  deleteTask(id) {
+    this.onItemDeleted.emit(id);
   }
 
   getCompleteButtonText(task) {
